@@ -1,0 +1,62 @@
+<input type="text" id="roomId" placeholder="Enter Room ID" />
+<button onclick="joinNearby()">Join</button>
+<p id="receiveStatus"></p>
+
+<script>
+const socket = io();
+let peer;
+
+function joinNearby() {
+  const room = document.getElementById("roomId").value.trim();
+  const status = document.getElementById("receiveStatus");
+  if (!room) return alert("Please enter a Room ID");
+
+  peer = new RTCPeerConnection();
+
+  peer.ondatachannel = (event) => {
+    const channel = event.channel;
+    let chunks = [];
+    let filename = "received_file";
+
+    channel.onmessage = e => {
+      if (typeof e.data === "string") {
+        filename = e.data;
+        status.innerText = "📥 Receiving: " + filename;
+      } else {
+        chunks.push(e.data);
+      }
+    };
+
+    channel.onclose = () => {
+      const blob = new Blob(chunks);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      status.innerText = "✅ Received: " + filename;
+    };
+  };
+
+  peer.onicecandidate = e => {
+    if (e.candidate) socket.emit("ice-candidate", { room, candidate: e.candidate });
+  };
+
+  socket.on("offer", data => {
+    peer.setRemoteDescription(data.offer).then(() => {
+      return peer.createAnswer();
+    }).then(answer => {
+      peer.setLocalDescription(answer);
+      socket.emit("answer", { room, answer });
+      status.innerText = "🔗 Connected. Waiting for file...";
+    });
+  });
+
+  socket.on("ice-candidate", data => {
+    peer.addIceCandidate(new RTCIceCandidate(data.candidate));
+  });
+
+  socket.emit("join-room", room);
+  status.innerText = "🔍 Waiting for sender...";
+}
+</script>
