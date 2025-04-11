@@ -1,0 +1,42 @@
+<input type="text" id="roomId" placeholder="Enter Room ID" />
+<input type="file" id="uploadInput" />
+<button onclick="sendFile()">Send File</button>
+<p id="status"></p>
+
+<script>
+const socket = io();
+let peer;
+
+function sendFile() {
+  const file = document.getElementById("uploadInput").files[0];
+  const room = document.getElementById("roomId").value.trim();
+  if (!file || !room) return alert("Please select a file and enter a Room ID");
+
+  peer = new RTCPeerConnection();
+  const channel = peer.createDataChannel("file");
+
+  channel.onopen = () => {
+    channel.send(file.name);
+    channel.send(file);
+    document.getElementById("status").innerText = "📤 File sent successfully!";
+  };
+
+  peer.onicecandidate = e => {
+    if (e.candidate) socket.emit("ice-candidate", { room, candidate: e.candidate });
+  };
+
+  peer.createOffer().then(offer => {
+    peer.setLocalDescription(offer);
+    socket.emit("offer", { room, offer });
+    document.getElementById("status").innerText = "📡 Waiting for peer to connect...";
+  });
+
+  socket.on("answer", data => {
+    peer.setRemoteDescription(data.answer);
+  });
+
+  socket.on("ice-candidate", data => {
+    peer.addIceCandidate(new RTCIceCandidate(data.candidate));
+  });
+}
+</script>
