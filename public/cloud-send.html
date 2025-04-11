@@ -1,0 +1,31 @@
+<!-- cloud-send.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cloud Send</title>
+</head>
+<body>
+  <h2>Upload File to Cloud</h2>
+  <input type="file" id="uploadInput" />
+  <button onclick="uploadFile()">Upload</button>
+  <p id="codeBox"></p>
+  <script>
+    function uploadFile() {
+      const file = document.getElementById('uploadInput').files[0];
+      if (!file) return alert("Select a file");
+      const formData = new FormData();
+      formData.append("file", file);
+      fetch("/upload", {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("codeBox").innerText = "Code: " + data.code;
+        });
+    }
+  </script>
+</body>
+</html>
