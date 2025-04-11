@@ -1,17 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ShareHub Cloud</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #0077ff;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+    }
+
+    input[type="file"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      background: #0077ff;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #005dcf;
+    }
+
+    #codeBox {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>Upload a File</h2>
-  <input type="file" id="uploadInput" />
-  <button onclick="uploadFile()">Upload</button>
-  <p id="codeBox"></p>
+  <div class="container">
+    <h1>📤 ShareHub Cloud</h1>
 
-  <h2>Download a File</h2>
-  <input type="text" id="downloadCode" placeholder="Enter code" />
-  <button onclick="downloadFile()">Download</button>
+    <label for="uploadInput">Choose a file to upload:</label>
+    <input type="file" id="uploadInput" />
+    <button onclick="uploadFile()">Upload</button>
+    <p id="codeBox"></p>
+
+    <hr style="margin: 25px 0; border: none; border-top: 1px solid #eee;" />
+
+    <label for="downloadCode">Enter code to download:</label>
+    <input type="text" id="downloadCode" placeholder="e.g. X9K23B" />
+    <button onclick="downloadFile()">Download</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
